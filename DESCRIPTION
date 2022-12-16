@@ -1,0 +1,14 @@
+Type: Package
+Package: remindPypsa
+Title: REMIND-PyPSA model coupling scripts
+Version: 0.0.1
+Date: 2022-12-16
+Authors@R:
+    person("Adrian", "Odenweller", , "adrian.odenweller@pik-potsdam.de", role = c("aut", "cre"))
+Description: This package contains functions for the iterative bi-directional model coupling of the integrated assessment model REMIND and the spatio-temporally detailed power and energy system model family PyPSA.
+License: LGPL-3
+URL: https://github.com/pik-piam/remindPypsa
+Suggests:
+    testthat
+Encoding: UTF-8
+RoxygenNote: 7.2.1
