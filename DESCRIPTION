@@ -9,6 +9,7 @@ Description: This package contains functions for the iterative bi-directional mo
 License: LGPL-3
 URL: https://github.com/pik-piam/remindPypsa
 Suggests:
+    covr,
     testthat
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3

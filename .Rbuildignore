@@ -1,0 +1,9 @@
+^\.buildlibrary$
+^\.pre-commit-config\.yaml$
+^Makefile$
+^workflow$
+^.lintr$
+^tests/.lintr$
+^codecov\.yml$
+^\.github$
+^.*\.zenodo.json$
