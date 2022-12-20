@@ -7,3 +7,5 @@
 ^codecov\.yml$
 ^\.github$
 ^.*\.zenodo.json$
+^.*\.Rproj$
+^\.Rproj\.user$
