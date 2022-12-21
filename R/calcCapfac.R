@@ -1,6 +1,6 @@
 #' Calculate capacity factors
 #'
-#' @param pyDir PyPSA output folder with sub-folders for years
+#' @param pyDirRes PyPSA results folder with sub-folders for years
 #' @param py2rmTech PyPSA to REMIND technology mapping
 #' @param py2rmRegi PyPSA to REMIND region mapping
 #' @param iter Current iteration
@@ -8,12 +8,12 @@
 #' @return Tibble with capacity factors for various years.
 #' @export
 #'
-calcCapfac <- function(pyDir, py2rmTech, py2rmRegi, iter) {
+calcCapfac <- function(pyDirRes, py2rmTech, py2rmRegi, iter) {
   # Initialise output
   cf <- NULL
 
   # Get directories
-  dirs <- list.dirs(path = pyDir,
+  dirs <- list.dirs(path = pyDirRes,
                     recursive = FALSE) %>%
     # Only includes directories of current iteration
     stringr::str_subset(pattern = paste0("i", iter))
