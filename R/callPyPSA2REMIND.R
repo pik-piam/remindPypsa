@@ -44,7 +44,7 @@ callPyPSA2REMIND <- function(pyDir, iter) {
 
   # Write GDX parameter
   gdxdt::writegdx.parameter(
-    gdx = paste("PyPSA2REMIND_i", iter, ".gdx"),
+    gdx = paste0("PyPSA2REMIND_i", iter, ".gdx"),
     dt = data.table::data.table(pypsa2remind),
     name = "PyPSA2REMIND",
     valcol = "value",
