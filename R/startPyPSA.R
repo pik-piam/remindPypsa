@@ -15,7 +15,7 @@ startPyPSA <- function(pyDir, iter) {
     "Snakefile_REMIND_prepare",
     "Snakefile_REMIND_solve",
     "StartPyPSA.sh")
-  dirPckg <- system.file("extdata", package = "remindPyPSA")
+  dirPckg <- system.file("extdata", package = "remindPypsa")
   for (p in pyFiles) {
     # Copy if file doesn't exist
     if (!file.exists(file.path(pyDir, p))) {
