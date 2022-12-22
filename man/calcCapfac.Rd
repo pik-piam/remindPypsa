@@ -4,10 +4,10 @@
 \alias{calcCapfac}
 \title{Calculate capacity factors}
 \usage{
-calcCapfac(pyDir, py2rmTech, py2rmRegi, iter)
+calcCapfac(pyDirRes, py2rmTech, py2rmRegi, iter)
 }
 \arguments{
-\item{pyDir}{PyPSA output folder with sub-folders for years}
+\item{pyDirRes}{PyPSA results folder with sub-folders for years}
 
 \item{py2rmTech}{PyPSA to REMIND technology mapping}
 
