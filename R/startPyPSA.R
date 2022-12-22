@@ -25,6 +25,9 @@ startPyPSA <- function(pyDir, iter) {
       )
     }
   }
+  # Enable execution of StartPyPSA.sh for owner (group read+write, others read)
+  Sys.chmod(paths = file.path(pyDir, "StartPyPSA.sh"),
+            mode = "0764")
   # Start PyPSA
   command <- paste(file.path(pyDir, "StartPyPSA.sh"), iter, runName)
   system(command)
