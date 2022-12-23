@@ -10,6 +10,7 @@ startPyPSA <- function(pyDir, iter) {
   # Get REMIND run name including time stamp
   runName <- stringr::str_extract(getwd(), "(?<=output/).*")
   # Copy required configuration files from inst/extdata into PyPSA directory
+  # This could get moved to remind/scripts/start/prepare_and_run.R in the future
   pyFiles <- c(
     "config.REMIND.yaml",
     "Snakefile_REMIND_prepare",

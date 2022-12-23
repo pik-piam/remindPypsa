@@ -10,7 +10,6 @@
 #'
 calcLoad <- function(rmFile, pyLoad, outDir, years) {
   # Create output folder
-
   if (!dir.exists(outDir)) dir.create(outDir)
 
   # Read in secondary energy production
@@ -29,16 +28,17 @@ calcLoad <- function(rmFile, pyLoad, outDir, years) {
   # Import original load time series
   load <- readr::read_csv(pyLoad, col_types = c("c", "n"))
 
-  # Scale up time series
+  # Loop over all years and export new load time series
   for (y in years){
-    # Get
+    # Get sum of load in original time series
     seelY <- seel %>%
       filter(.data$tall == y) %>%
       pull(.data$value)
-
-    calc <- load %>%
+    # Scale up load time series
+    loadScaled <- load %>%
       mutate(DE = seelY / sum(.data$DE) * .data$DE) %>%
       mutate(DE = round(.data$DE, 4))
-    readr::write_csv(calc, file.path(outDir, paste0("load_y", y, ".csv")))
+    # Write csv into PyPSA folder
+    readr::write_csv(loadScaled, file.path(outDir, paste0("load_y", y, ".csv")))
   }
 }
