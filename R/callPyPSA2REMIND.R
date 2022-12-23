@@ -31,9 +31,21 @@ callPyPSA2REMIND <- function(pyDir, iter) {
     "DE0" = "DEU"
   )
 
+  # Move results from PyPSA directory to REMIND directory
+  dir.create("pypsa")
+  pyDirRes <- file.path(pyDir, "results", "networks", runName)
+  pyResFiles <- list.files(pyDirRes, full.names = TRUE)
+  # Copy results
+  file.copy(
+    from = pyResFiles,
+    to = "pypsa",
+    recursive = TRUE)
+  # Delete original results
+  unlink(pyResFiles, recursive = TRUE)
+
   # Calculate capacity factor
   capfac <- remindPypsa::calcCapfac(
-    pyDirRes = file.path(pyDir, "results", "networks", runName),
+    pyDirRes = "pypsa",
     py2rmTech = py2rmTech,
     py2rmRegi = py2rmRegi,
     iter = iter

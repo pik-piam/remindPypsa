@@ -1,7 +1,7 @@
 Type: Package
 Package: remindPypsa
 Title: REMIND-PyPSA model coupling scripts
-Version: 0.0.1.9005
+Version: 0.0.1.9006
 Date: 2022-12-23
 Authors@R:
     person("Adrian", "Odenweller", , "adrian.odenweller@pik-potsdam.de", role = c("aut", "cre"))
