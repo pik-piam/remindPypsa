@@ -10,6 +10,7 @@ startPyPSA <- function(pyDir, iter) {
   # Get REMIND run name including time stamp
   runName <- stringr::str_extract(getwd(), "(?<=output/).*")
   # Copy required configuration files from inst/extdata into PyPSA directory
+  # This could get moved to remind/scripts/start/prepare_and_run.R in the future
   pyFiles <- c(
     "config.REMIND.yaml",
     "Snakefile_REMIND_prepare",
@@ -31,4 +32,15 @@ startPyPSA <- function(pyDir, iter) {
   # Start PyPSA
   command <- paste(file.path(pyDir, "StartPyPSA.sh"), iter, runName)
   system(command)
+  # Move results from PyPSA directory to REMIND directory
+  dir.create("pypsa")
+  pyDirRes <- file.path(pyDir, "results", "networks", runName)
+  pyResFiles <- list.files(pyDirRes, full.names = TRUE)
+  # Copy results
+  file.copy(
+    from = pyResFiles,
+    to = "pypsa",
+    recursive = TRUE)
+  # Delete original results
+  unlink(pyResFiles, recursive = TRUE)
 }
