@@ -1,6 +1,6 @@
 # REMIND-PyPSA model coupling scripts
 
-R package **remindPypsa**, version **0.0.1.9006**
+R package **remindPypsa**, version **0.0.1.9007**
 
 [![CRAN status](https://www.r-pkg.org/badges/version/remindPypsa)](https://cran.r-project.org/package=remindPypsa)  [![R build status](https://github.com/pik-piam/remindPypsa/workflows/check/badge.svg)](https://github.com/pik-piam/remindPypsa/actions) [![codecov](https://codecov.io/gh/pik-piam/remindPypsa/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/remindPypsa) 
 
@@ -38,7 +38,7 @@ In case of questions / problems please contact Adrian Odenweller <adrian.odenwel
 
 To cite package **remindPypsa** in publications use:
 
-Odenweller A (2022). _remindPypsa: REMIND-PyPSA model coupling scripts_. R package version 0.0.1.9006, <https://github.com/pik-piam/remindPypsa>.
+Odenweller A (2023). _remindPypsa: REMIND-PyPSA model coupling scripts_. R package version 0.0.1.9007, <https://github.com/pik-piam/remindPypsa>.
 
 A BibTeX entry for LaTeX users is
 
@@ -46,8 +46,8 @@ A BibTeX entry for LaTeX users is
 @Manual{,
   title = {remindPypsa: REMIND-PyPSA model coupling scripts},
   author = {Adrian Odenweller},
-  year = {2022},
-  note = {R package version 0.0.1.9006},
+  year = {2023},
+  note = {R package version 0.0.1.9007},
   url = {https://github.com/pik-piam/remindPypsa},
 }
 ```
