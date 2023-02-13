@@ -19,7 +19,7 @@ calcCapfac <- function(pyDirRes, py2rmTech, py2rmRegi, iter) {
     stringr::str_subset(pattern = paste0("i", iter))
 
   # Print status
-  print(paste(length(dirs), "PyPSA output directories found."))
+  cat(length(dirs), "PyPSA output directories found.")
 
   # Loop over yearly PyPSA output
   for (d in dirs) {
