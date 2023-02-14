@@ -9,8 +9,7 @@
 # This snakefile requires internet access.
 
 from os.path import normpath, exists
-from shutil import move
-
+from shutil import copyfile, move
 from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 
 HTTP = HTTPRemoteProvider()
@@ -41,7 +40,7 @@ if config["enable"].get("prepare_links_p_nom", False):
             "logs/" + RDIR + "prepare_links_p_nom.log",
         threads: 1
         resources:
-            mem_mb=500,
+            mem_mb=1500,
         script:
             "scripts/prepare_links_p_nom.py"
 
@@ -140,7 +139,7 @@ rule base_network:
         "benchmarks/" + RDIR + "base_network"
     threads: 1
     resources:
-        mem_mb=500,
+        mem_mb=1500,
     script:
         "scripts/base_network.py"
 
@@ -163,7 +162,7 @@ rule build_shapes:
         "logs/" + RDIR + "build_shapes.log",
     threads: 1
     resources:
-        mem_mb=500,
+        mem_mb=1500,
     script:
         "scripts/build_shapes.py"
 
