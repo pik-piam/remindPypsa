@@ -1,4 +1,4 @@
-#' Calculate capacity factors
+#' Calculate capacity factors (PyPSA to REMIND)
 #'
 #' @param pyDirRes PyPSA results folder with sub-folders for years
 #' @param py2rmTech PyPSA to REMIND technology mapping
