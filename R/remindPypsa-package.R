@@ -8,6 +8,7 @@
 #' @importFrom dplyr rename
 #' @importFrom dplyr select
 #' @importFrom dplyr summarise
+#' @importFrom plyr .
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
 ## usethis namespace: end
