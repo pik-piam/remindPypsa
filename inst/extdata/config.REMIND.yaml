@@ -17,7 +17,7 @@ scenario:
   simpl: ['']  # Number of buses for pre-clustering
   ll: ['copt']  # Line limits: Limit on line costs (c), optimise (opt)
   clusters: [4]
-  opts: [1H]  # Co2L = CO2 limit, Ep = emission pricing, hourly resolution (1H)
+  opts: [1H]  # TODO: Maybe use CCL setting to import lower capacity bounds from REMIND
   year: [2025, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2070, 2080, 2090, 2100, 2110, 2130, 2150]
 
 countries: ['DE']
@@ -42,7 +42,7 @@ electricity:
   gaslimit: false # global gas usage limit of X MWh_th
   co2limit: 7.75e+7 # 0.05 * 3.1e9*0.5
   co2base: 1.487e+9
-  agg_p_nom_limits: data/agg_p_nom_minmax.csv
+  agg_p_nom_limits: data/agg_p_nom_minmax.csv  # TODO: For coupling?
 
   operational_reserve: # like https://genxproject.github.io/GenX/dev/core/#Reserves
     activate: false
@@ -55,7 +55,7 @@ electricity:
     H2: 168
 
   extendable_carriers:
-    Generator: [solar, onwind, offwind-ac, offwind-dc, OCGT]  # TODO: Include all carriers
+    Generator: [solar, onwind, offwind-ac, offwind-dc, OCGT, nuclear, oil, CCGT, coal, lignite, geothermal, biomass]
     StorageUnit: [] # battery, H2
     Store: [battery, H2]
     Link: [] # H2 pipeline
@@ -109,7 +109,7 @@ atlite:
       sarah_dir:
       features: [influx, temperature]
 
-
+# TODO: Adjust these assumptions to allow technological progress over time
 renewable:
   onwind:
     cutout: europe-2013-era5
@@ -231,6 +231,7 @@ load:
   manual_adjustments: true # false
   scaling_factor: 1.0
 
+# TODO: Adjust/remove because this comes from REMIND via csv files
 costs:
   year: 2030
   version: v0.4.0
