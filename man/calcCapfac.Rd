@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcCapfac.R
 \name{calcCapfac}
 \alias{calcCapfac}
-\title{Calculate capacity factors}
+\title{Calculate capacity factors (PyPSA to REMIND)}
 \usage{
 calcCapfac(pyDirRes, py2rmTech, py2rmRegi, iter)
 }
@@ -19,5 +19,5 @@ calcCapfac(pyDirRes, py2rmTech, py2rmRegi, iter)
 Tibble with capacity factors for various years.
 }
 \description{
-Calculate capacity factors
+Calculate capacity factors (PyPSA to REMIND)
 }
