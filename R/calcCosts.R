@@ -36,7 +36,7 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
   disRate <- readGDXtibble(
     rmFile = rmFile,
     gdxVar = "p32_PyDisrate",
-    columns = c("regPy32" = "region", "ttot" = "year", "value" = "disRate"),
+    columns = c("all_regi" = "region", "ttot" = "year", "value" = "disRate"),
     colFilter = list("region" = "DEU", "year" = years)
   ) %>%
   # Copy 2130 value to 2150
