@@ -131,9 +131,26 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     colFilter = list("region" = "DEU", "tech" = names(rm2pyTech), "year" = years)
   )
 
+  # Read in se2fe efficiencies for transmission and distribution (tdels and tdelt)
+  # F: Weighted average of tdels and tdelt. Currently not important as they are the same.
+  tdEta <- readGDXtibble(
+    rmFile = rmFile,
+    gdxVar = "pm_eta_conv",
+    columns = c("all_regi" = "region", "all_te" = "tech", "tall" = "year", "value" = "tdEta"),
+    colFilter = list("region" = "DEU", "tech" = c("tdels", "tdelt"), "year" = years)
+  ) %>%
+    group_by(.data$region, .data$year) %>%
+    summarise(tdEta = mean(.data$tdEta))
+
   # Combine efficiencies
   eta <- pmEtaConv %>%
-    dplyr::bind_rows(pmDataEta)
+    dplyr::bind_rows(pmDataEta) %>%
+    # Multiply with tdEta because of se2fe efficiencies
+    # This is necessary to represent the full pe2fe efficiency in PyPSA.
+    # If prodSe instead of prodFe would be used to scale up demand this could be different.
+    dplyr::full_join(tdEta) %>%
+    mutate(eta = .data$eta * .data$tdEta) %>%
+    select(!"tdEta")
 
   # Mapping of REMIND technologies to primary energy carriers
   # F: Read in from REMIND
