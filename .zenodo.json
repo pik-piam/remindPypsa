@@ -1,6 +1,6 @@
 {
   "title": "remindPypsa: REMIND-PyPSA model coupling scripts",
-  "version": "0.0.1.9012",
+  "version": "0.0.1.9013",
   "description": "<p>This package contains functions for the iterative bi-directional model coupling of the integrated assessment model REMIND and the spatio-temporally detailed power and energy system model family PyPSA.<\/p>",
   "creators": [
     {

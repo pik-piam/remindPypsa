@@ -114,7 +114,7 @@ rule cluster_network_rm:
             if config["enable"].get("custom_busmap", False)
             else []
         ),
-        tech_costs=COSTS,
+        tech_costs="resources/" + RDIR + "costs.csv",
     output:
         network="networks/" + RDIR_rm + "elec_s{simpl}_{clusters}_y{year}.nc",
         regions_onshore="resources/"
