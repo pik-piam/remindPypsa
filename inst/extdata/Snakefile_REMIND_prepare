@@ -5,7 +5,7 @@
 # Snakefile #1 for REMIND-PyPSA coupling. Changes by Adrian Odenweller.
 
 # This snakefile contains all rules prior to add_electricity.
-# This produces all files required prior to any input from REMIND.
+# An additional rule "prepare_files_rm" produces all files before any data exchange with REMIND.
 # This snakefile requires internet access.
 
 from os.path import normpath, exists
@@ -379,7 +379,7 @@ rule prepare_files_rm:
             if str(fn).startswith("data/")
         },
         base_network="networks/" + RDIR + "base.nc",
-        tech_costs="resources/" + RDIR + "costs.csv",  # Remove here later as this will come from REMIND?
+        #tech_costs="resources/" + RDIR + "costs.csv",  # Costs dataset, some of which are overwritten by REMIND
         regions="resources/" + RDIR + "regions_onshore.geojson",
         powerplants="resources/" + RDIR + "powerplants.csv",
         hydro_capacities="data/bundle/hydro_capacities.csv",

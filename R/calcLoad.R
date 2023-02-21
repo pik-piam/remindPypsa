@@ -13,17 +13,16 @@ calcLoad <- function(rmFile, pyLoad, outDir, years) {
   if (!dir.exists(outDir)) dir.create(outDir)
 
   # Read in secondary energy production
-  seel <- gdxdt::readgdx(rmFile, "vm_prodSe") %>%
-    tibble::as_tibble(.name_repair = "unique") %>%
-    # Secondary electricity
-    filter(.data$all_enty...4 == "seel",
-           .data$all_regi == "DEU",
-           .data$tall %in% years) %>%
-    group_by(.data$tall, .data$all_regi) %>%
-    # Summarise over technologies
-    summarise(value = sum(.data$value)) %>%
-    mutate(value = 1E6 * 8760 * .data$value) %>%   # TWa to MWh
-    quitte::revalue.levels(all_regi = c("DEU" = "DE"))
+  prodFe <- readGDXtibble(
+    rmFile = rmFile,
+    gdxVar = "vm_prodFe",
+    columns = c("all_regi" = "region", "all_enty...3" = "seCarrier",
+    "all_enty...4" = "FeCarrier", "ttot" = "year", "value" = "prodFe"),
+    colFilter = list("region" = "DEU", "seCarrier" = "seel", "FeCarrier" = c("feels", "feelt"), "year" = years),
+    recalcUnit = 1E6 * 8760  # TWa to MWh
+  ) %>%
+  group_by(.data$region, .data$year) %>%
+  summarise(prodFe = sum(.data$prodFe))
 
   # Import original load time series
   load <- readr::read_csv(pyLoad, col_types = c("c", "n"))
@@ -31,12 +30,12 @@ calcLoad <- function(rmFile, pyLoad, outDir, years) {
   # Loop over all years and export new load time series
   for (y in years){
     # Get sum of load in original time series
-    seelY <- seel %>%
-      filter(.data$tall == y) %>%
-      pull(.data$value)
+    prodFeY <- prodFe %>%
+      filter(.data$year == y) %>%
+      pull(.data$prodFe)
     # Scale up load time series
     loadScaled <- load %>%
-      mutate(DE = seelY / sum(.data$DE) * .data$DE) %>%
+      mutate(DE = prodFeY / sum(.data$DE) * .data$DE) %>%
       mutate(DE = round(.data$DE, 4))
     # Write csv into PyPSA folder
     readr::write_csv(loadScaled, file.path(outDir, paste0("load_y", y, ".csv")))
