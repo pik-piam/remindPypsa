@@ -39,8 +39,10 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     columns = c("all_regi" = "region", "ttot" = "year", "value" = "disRate"),
     colFilter = list("region" = "DEU", "year" = years)
   ) %>%
-  # Copy 2130 value to 2150
-    mutate(disRate = ifelse(.data$year == 2150, dplyr::lag(.data$disRate), .data$disRate))
+  # Complete dataset with missing years and fill with value from 2130
+  group_by(.data$region) %>%
+  tidyr::complete(year = years) %>%
+  tidyr::fill("disRate", .direction = "down")
 
   # Read in fixed O&M and lifetime
   pmData <- readGDXtibble(
@@ -206,7 +208,7 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
   ) %>%
   select(c("tech", "emiInt"))
 
-  # Calculate marginal costs
+  # Calculate marginal costs for REMIND technologies
   margCostRe <- vom %>%
     dplyr::full_join(eta) %>%
     dplyr::full_join(fuelPrice) %>%

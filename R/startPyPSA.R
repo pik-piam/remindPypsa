@@ -18,13 +18,12 @@ startPyPSA <- function(pyDir, iter) {
     "StartPyPSA.sh")
   dirPckg <- system.file("extdata", package = "remindPypsa")
   for (p in pyFiles) {
-    # Copy if file doesn't exist
-    if (!file.exists(file.path(pyDir, p))) {
-      file.copy(
-        from = file.path(dirPckg, p),
-        to = pyDir
-      )
-    }
+    # Copy and overwrite if file already exists
+    file.copy(
+      from = file.path(dirPckg, p),
+      to = pyDir,
+      overwrite = TRUE
+    )
   }
   # Enable execution of StartPyPSA.sh for owner (group read+write, others read)
   Sys.chmod(paths = file.path(pyDir, "StartPyPSA.sh"),
