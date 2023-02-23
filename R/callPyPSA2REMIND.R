@@ -55,6 +55,7 @@ callPyPSA2REMIND <- function(pyDir, iter) {
   pypsa2remind <- dplyr::bind_rows(capfac)
 
   # Write GDX parameter
+  # F: Change this to gdx package
   gdxdt::writegdx.parameter(
     gdx = paste0("PyPSA2REMIND_i", iter, ".gdx"),
     dt = data.table::data.table(pypsa2remind),

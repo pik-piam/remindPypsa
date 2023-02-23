@@ -12,12 +12,13 @@ calcLoad <- function(rmFile, pyLoad, outDir, years) {
   # Create output folder
   if (!dir.exists(outDir)) dir.create(outDir)
 
-  # Read in secondary energy production
+  # Read in final energy production of electricity (stationary + transport)
   prodFe <- readGDXtibble(
     rmFile = rmFile,
     gdxVar = "vm_prodFe",
-    columns = c("all_regi" = "region", "all_enty...3" = "seCarrier",
-    "all_enty...4" = "FeCarrier", "ttot" = "year", "value" = "prodFe"),
+    restoreZeros = FALSE,
+    columns = c("all_regi" = "region", "all_enty" = "seCarrier",
+    "all_enty1" = "FeCarrier", "ttot" = "year", "value" = "prodFe"),
     colFilter = list("region" = "DEU", "seCarrier" = "seel", "FeCarrier" = c("feels", "feelt"), "year" = years),
     recalcUnit = 1E6 * 8760  # TWa to MWh
   ) %>%

@@ -72,10 +72,11 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
   prodSe <- readGDXtibble(
     rmFile = rmFile,
     gdxVar = "vm_prodSe",
-    columns = c("all_regi" = "region", "all_enty...4" = "enty", "tall" = "year", "all_te" = "tech", "value" = "prodSe"),
+    restoreZeros = FALSE,
+    columns = c("all_regi" = "region", "all_enty1" = "enty", "tall" = "year", "all_te" = "tech", "value" = "prodSe"),
     colFilter = list("region" = "DEU", "enty" = "seel", "year" = years, "tech" = names(rm2pyTech))
-  ) %>%
-  select(!"enty")
+    ) %>%
+    select(!"enty")
 
   # Calculate average of annualised capital costs weighted by prodSe by aggregated technology
   capCostAgg <- capCostAn %>%
@@ -83,7 +84,7 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     mutate(prodSe = ifelse(is.na(.data$prodSe), 0, .data$prodSe)) %>%
     # Calculated average of capCost weighted by prodSe with technology mapping rm2pyTech
     quitte::revalue.levels(tech = rm2pyTech) %>%
-    rename(techAgg = .data$tech) %>%
+    rename(techAgg = "tech") %>%
     group_by(.data$year, .data$region, .data$techAgg) %>%
     summarise(capCost = sum(.data$capCostAn * .data$prodSe) / sum(.data$prodSe)) %>%
     # Remove technologies without capCost (currently csp and geohdr)
@@ -140,7 +141,7 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     gdxVar = "pm_eta_conv",
     columns = c("all_regi" = "region", "all_te" = "tech", "tall" = "year", "value" = "tdEta"),
     colFilter = list("region" = "DEU", "tech" = c("tdels", "tdelt"), "year" = years)
-  ) %>%
+    ) %>%
     group_by(.data$region, .data$year) %>%
     summarise(tdEta = mean(.data$tdEta))
 
@@ -158,11 +159,14 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
   # F: Read in from REMIND
   rm2pe <- c("bioigcc" = "pebiolc",
              "bioigccc" = "pebiolc",
+             "biochp" = "pebiolc",
              "ngcc" = "pegas",
              "ngccc" = "pegas",
+             "gaschp" = "pegas",
              "igcc" = "pecoal",
              "igccc" = "pecoal",
              "pc" = "pecoal",
+             "coalchp" = "pecoal",
              "tnrs" = "peur",
              "fnrs" = "peur",
              "ngt" = "pegas",
@@ -187,7 +191,8 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     mutate(peCarrier = .data$tech) %>%
     quitte::revalue.levels(peCarrier = rm2pe) %>%
     dplyr::right_join(fuelPricePe) %>%
-    select(!"peCarrier")
+    select(!"peCarrier") %>%
+    tidyr::complete(year = years, region = "DEU", tech = names(rm2pyTech), fill = list(fuelPrice = 0))
 
   # Read in carbon price
   carbonPrice <- readGDXtibble(
@@ -196,17 +201,23 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     columns = c("all_regi" = "region", "tall" = "year", "value" = "carbonPrice"),
     colFilter = list("region" = "DEU", "year" = years),
     recalcUnit = 1 / 3.666666666667  # $/tC -> $/tCO2
-  )
+    ) %>%
+    # Fill in missing values with 0
+    tidyr::complete(year = years, region = "DEU", fill = list(carbonPrice = 0))
 
   # Read in emission intensities
+  # Q: biochp and bioigcc have no emission factors
   emiInt <- readGDXtibble(
     rmFile = rmFile,
     gdxVar = "fm_dataemiglob",
-    columns = c("all_te" = "tech", "all_enty...2" = "seCarrier", "all_enty...4" = "emiType", "value" = "emiInt"),
+    restoreZeros = FALSE,
+    columns = c("all_te" = "tech", "all_enty1" = "seCarrier", "all_enty2" = "emiType", "value" = "emiInt"),
     colFilter = list("tech" = names(rm2pyTech), "seCarrier" = "seel", "emiType" = "co2"),
     recalcUnit = 3.666666666667 * 1E3 / 8760  # GtC per TWa -> tCO2 per Mwh
-  ) %>%
-  select(c("tech", "emiInt"))
+    ) %>%
+    select(c("tech", "emiInt")) %>%
+    # Temporary workaround: Set other emi factors to zero
+    tidyr::complete(tech = names(rm2pyTech), fill = list(emiInt = 0))
 
   # Calculate marginal costs for REMIND technologies
   margCostRe <- vom %>%
@@ -215,11 +226,6 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     dplyr::full_join(carbonPrice) %>%
     dplyr::full_join(emiInt) %>%
     # Replace na with default values
-    mutate(vom = ifelse(is.na(.data$vom), 0, .data$vom),
-           eta = ifelse(is.na(.data$eta), 1, .data$eta),
-           fuelPrice = ifelse(is.na(.data$fuelPrice), 0, .data$fuelPrice),
-           carbonPrice = ifelse(is.na(.data$carbonPrice), 0, .data$carbonPrice),
-           emiInt = ifelse(is.na(.data$emiInt), 0, .data$emiInt)) %>%
     group_by(.data$region, .data$tech, .data$year) %>%
     dplyr::transmute(margCost = .data$vom + .data$fuelPrice / .data$eta + .data$carbonPrice * .data$emiInt)
 

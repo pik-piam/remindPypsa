@@ -4,7 +4,15 @@
 \alias{readGDXtibble}
 \title{Read data from gdx file and return as tibble with filtered columns.}
 \usage{
-readGDXtibble(rmFile, gdxVar, columns, colFilter, recalcUnit = 1)
+readGDXtibble(
+  rmFile,
+  gdxVar,
+  columns,
+  colFilter,
+  restoreZeros = TRUE,
+  field = "l",
+  recalcUnit = 1
+)
 }
 \arguments{
 \item{rmFile}{Path to gdx file.}
@@ -14,6 +22,10 @@ readGDXtibble(rmFile, gdxVar, columns, colFilter, recalcUnit = 1)
 \item{columns}{Named vector of columns in gdx file to new column names.}
 
 \item{colFilter}{Named list of new column names to filter values of that column.}
+
+\item{restoreZeros}{Logical indicating whether to restore zeros in readGDX.}
+
+\item{field}{Field of variable to read from gdx file.}
 
 \item{recalcUnit}{Factor that values are multiplied with.}
 }

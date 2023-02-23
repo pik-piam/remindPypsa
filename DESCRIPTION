@@ -1,8 +1,8 @@
 Type: Package
 Package: remindPypsa
 Title: REMIND-PyPSA model coupling scripts
-Version: 0.0.1.9013
-Date: 2023-02-21
+Version: 0.0.1.9014
+Date: 2023-02-23
 Authors@R:
     person("Adrian", "Odenweller", , "adrian.odenweller@pik-potsdam.de", role = c("aut", "cre"))
 Description: This package contains functions for the iterative bi-directional model coupling of the integrated assessment model REMIND and the spatio-temporally detailed power and energy system model family PyPSA.
@@ -16,6 +16,7 @@ RoxygenNote: 7.2.3
 Imports: 
     data.table,
     dplyr,
+    gdx,
     gdxdt,
     magrittr,
     plyr,
