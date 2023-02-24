@@ -19,8 +19,6 @@ RDIR = run["name"] + "/" if run.get("name") else ""
 CDIR = RDIR if not run.get("shared_cutouts") else ""
 RDIR_rm = config.get("RDIR_rm", {}) + "/"  # REMIND run name, passed from command line
 
-#COSTS = "resources/" + RDIR + "costs.csv"
-
 wildcard_constraints:
     simpl="[a-zA-Z0-9]*|all",
     clusters="[0-9]+m?|all",
@@ -63,6 +61,7 @@ rule add_electricity_rm:
         },
         base_network="networks/" + RDIR + "base.nc",
         tech_costs="resources/" + RDIR + "costs.csv",
+        tech_costs_rm = "resources/" + RDIR_rm + "costs_y{year}.csv"
         regions="resources/" + RDIR + "regions_onshore.geojson",
         powerplants="resources/" + RDIR + "powerplants.csv",
         hydro_capacities="data/bundle/hydro_capacities.csv",

@@ -235,7 +235,7 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     mutate(prodSe = ifelse(is.na(.data$prodSe), 0, .data$prodSe)) %>%
     # Calculated average of margCost weighted by prodSe with technology mapping rm2pyTech
     quitte::revalue.levels(tech = rm2pyTech) %>%
-    rename(techAgg = .data$tech) %>%
+    rename(techAgg = "tech") %>%
     group_by(.data$year, .data$region, .data$techAgg) %>%
     summarise(margCost = sum(.data$margCost * .data$prodSe) / sum(.data$prodSe)) %>%
     # Remove technologies without margCost (currently csp and geohdr)
