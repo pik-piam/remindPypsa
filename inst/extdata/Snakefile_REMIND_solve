@@ -61,7 +61,7 @@ rule add_electricity_rm:
         },
         base_network="networks/" + RDIR + "base.nc",
         tech_costs="resources/" + RDIR + "costs.csv",
-        tech_costs_rm = "resources/" + RDIR_rm + "costs_y{year}.csv"
+        tech_costs_rm = "resources/" + RDIR_rm + "costs_y{year}.csv",
         regions="resources/" + RDIR + "regions_onshore.geojson",
         powerplants="resources/" + RDIR + "powerplants.csv",
         hydro_capacities="data/bundle/hydro_capacities.csv",
