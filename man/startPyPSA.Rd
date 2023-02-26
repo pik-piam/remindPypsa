@@ -4,12 +4,14 @@
 \alias{startPyPSA}
 \title{Start PyPSA}
 \usage{
-startPyPSA(pyDir, iter)
+startPyPSA(pyDir, iter, copyConfig = TRUE)
 }
 \arguments{
 \item{pyDir}{PyPSA folder}
 
 \item{iter}{Current iteration}
+
+\item{copyConfig}{Logical indicating whether to copy PyPSA config files from inst/extdata}
 }
 \value{
 None.
