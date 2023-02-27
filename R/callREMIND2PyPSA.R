@@ -60,12 +60,29 @@ callREMIND2PyPSA <- function(pyDir, iter) {
     )
 
   # Calculate costs for all years
-  remindPypsa::calcCosts(
+  costs <- remindPypsa::calcCosts(
     rmFile = rmFile,
     outDir = file.path(pyDir, "resources", runName),
     years = years,
     rm2pyTech = rm2pyTech,
     py2aggTech = py2aggTech
     )
+
+  # Combine data
+  remind2pypsa <- dplyr::bind_rows(costs)
+
+  # Save data for plotting
+  remind2pypsaReport <- remind2pypsa %>%
+    mutate(iter = iter)
+  # If file exists, append data
+  if (file.exists("remind2pypsa.rds")) {
+    remind2pypsaTemp <- readRDS("remind2pypsa.rds")
+    remind2pypsaReport <-
+      dplyr::bind_rows(remind2pypsaTemp, remind2pypsaReport)
+  }
+  # Save as R object
+  saveRDS(remind2pypsaReport, file = "remind2pypsa.rds")
+  # Save as CSV
+  readr::write_csv(remind2pypsaReport, "remind2pypsa.csv")
 
 }

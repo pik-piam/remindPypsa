@@ -277,5 +277,15 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
 
     # Write to csv
     readr::write_csv(costY, file.path(outDir, paste0("costs_y", y, ".csv")))
-   }
+  }
+  # ---------------------------------------------------------------------------
+  # Return for plotting
+  # ---------------------------------------------------------------------------
+  costs <- dplyr::full_join(capCost, margCost) %>%
+    tidyr::pivot_longer(
+      cols = c("capCost", "margCost"),
+      names_to = "variable",
+      values_to = "value")
+
+  return(costs)
 }
