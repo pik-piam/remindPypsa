@@ -69,7 +69,7 @@ callREMIND2PyPSA <- function(pyDir, iter) {
     )
 
   # Combine data
-  remind2pypsa <- dplyr::bind_rows(costs)
+  remind2pypsa <- bind_rows(costs)
 
   # Save data for plotting
   remind2pypsaReport <- remind2pypsa %>%
@@ -78,7 +78,7 @@ callREMIND2PyPSA <- function(pyDir, iter) {
   if (file.exists("remind2pypsa.rds")) {
     remind2pypsaTemp <- readRDS("remind2pypsa.rds")
     remind2pypsaReport <-
-      dplyr::bind_rows(remind2pypsaTemp, remind2pypsaReport)
+      bind_rows(remind2pypsaTemp, remind2pypsaReport)
   }
   # Save as R object
   saveRDS(remind2pypsaReport, file = "remind2pypsa.rds")

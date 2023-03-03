@@ -8,9 +8,19 @@
 #' @importFrom dplyr rename
 #' @importFrom dplyr select
 #' @importFrom dplyr summarise
+#' @importFrom dplyr full_join
+#' @importFrom dplyr bind_rows
 #' @importFrom plyr .
 #' @importFrom magrittr %>%
 #' @importFrom rlang .data
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_line
+#' @importFrom ggplot2 geom_point
+#' @importFrom ggplot2 facet_wrap
+#' @importFrom ggplot2 xlab
+#' @importFrom ggplot2 ylab
+#' @importFrom ggplot2 theme_bw
 ## usethis namespace: end
 #' @docType package
 "_PACKAGE"

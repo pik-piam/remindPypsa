@@ -49,7 +49,7 @@ calcCapfac <- function(pyDirRes, py2rmTech, py2rmRegi, iter) {
                sep = " ")
 
     # Calculate capacity factor
-    calc <- dplyr::full_join(g, gP) %>%
+    calc <- full_join(g, gP) %>%
       # Aggregate technologies
       quitte::revalue.levels(tech = py2rmTech,
                      region = py2rmRegi) %>%
@@ -64,7 +64,7 @@ calcCapfac <- function(pyDirRes, py2rmTech, py2rmRegi, iter) {
       select(.data$year, .data$region, .data$tech, .data$var, .data$value)
 
     # Append to output
-    cf <- dplyr::bind_rows(cf, calc)
+    cf <- bind_rows(cf, calc)
   }
   return(cf)
 }

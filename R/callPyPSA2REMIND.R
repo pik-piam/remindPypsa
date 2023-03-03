@@ -52,7 +52,9 @@ callPyPSA2REMIND <- function(pyDir, iter) {
   )
 
   # Combine data
-  pypsa2remind <- dplyr::bind_rows(capfac)
+  pypsa2remind <- bind_rows(capfac) %>%
+    mutate(year = as.integer(.data$year),
+           iter = as.integer(.data$iter))
 
   # Save data for plotting
   pypsa2remindReport <- pypsa2remind %>%
@@ -60,7 +62,7 @@ callPyPSA2REMIND <- function(pyDir, iter) {
   # If file exists, append data
   if (file.exists("pypsa2remind.rds")) {
     pypsa2remindTemp <- readRDS("pypsa2remind.rds")
-    pypsa2remindReport <- dplyr::bind_rows(pypsa2remindTemp, pypsa2remindReport)
+    pypsa2remindReport <- bind_rows(pypsa2remindTemp, pypsa2remindReport)
   }
   # Save as R object
   saveRDS(pypsa2remindReport, file = "pypsa2remind.rds")
