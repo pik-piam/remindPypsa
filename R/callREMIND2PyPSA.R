@@ -74,7 +74,7 @@ callREMIND2PyPSA <- function(pyDir, iter) {
     pyPowerplants = file.path(pyDir, "resources", "RM_Py_default", "powerplants.csv"),
     rm2pyTech = rm2pyTech,
     outDir = file.path(pyDir, "resources", runName),
-    years = years,
+    years = years
     )
 
   # Combine data
