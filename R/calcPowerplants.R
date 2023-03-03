@@ -55,12 +55,12 @@ calcPowerplants <- function(rmFile, pyPowerplants, rm2pyTech, outDir, years) {
     full_join(vmDeltaCap) %>%
     full_join(vmCapEarlyReti) %>%
     group_by(.data$region, .data$year, .data$technology) %>%
-    mutate(preInvCap = vmCap - (pmDt / 2 * vmDeltaCap) * (1 - vmCapEarlyReti),
-           preInvCap = max(0, preInvCap)) %>%
+    mutate(preInvCap = vmCap - (pmDt / 2 * vmDeltaCap) * (1 - vmCapEarlyReti)) %>%
     # Aggregate to PyPSA technologies
     quitte::revalue.levels(technology = rm2pyTech) %>%
-    summarise(preInvCap = sum(preInvCap))
-
+    # Take sum with minimum capacity of 0.1 MW to avoid zero capacity in PyPSA
+    summarise(preInvCap = max(0.1, sum(preInvCap)))
+    # Q: Can this be done more elegantly using agg_p_nom_minmax.csv?
   # Read powerplants.csv file
   powerplants <- readr::read_csv(pyPowerplants)
 
@@ -81,10 +81,13 @@ calcPowerplants <- function(rmFile, pyPowerplants, rm2pyTech, outDir, years) {
   )
   # Loop over all years and export new powerplant database
   for (y in years){
-    # First, filter power plants that are supposed to be scraped by year y
+    # Filter by fuel type, this removes Waste and Other
     powerplantsY <- powerplants %>%
-      filter(.data$DateOut > y,
-             .data$Fueltype %in% names(pplFuel2pyTech))
+      filter(.data$Fueltype %in% names(pplFuel2pyTech)) %>%
+      # Set capacity to 0.1 MW if DateOut < y
+      mutate(DateOut = tidyr::replace_na(.data$DateOut, 2200),  # If missing set to 2200
+             Capacity = ifelse(.data$DateOut < y, 0.1, .data$Capacity))
+    # Get pre-investment capacity in year y
     preInvCapY <- preInvCap %>%
       filter(.data$year == y) %>%
       dplyr::ungroup()
