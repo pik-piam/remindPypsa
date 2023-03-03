@@ -68,6 +68,15 @@ callREMIND2PyPSA <- function(pyDir, iter) {
     py2aggTech = py2aggTech
     )
 
+  # Adjust powerplant database for all years
+  remindPypsa::calcPowerplants(
+    rmFile = rmFile,
+    pyPowerplants = file.path(pyDir, "resources", "RM_Py_default", "powerplants.csv"),
+    rm2pyTech = rm2pyTech,
+    outDir = file.path(pyDir, "resources", runName),
+    years = years,
+    )
+
   # Combine data
   remind2pypsa <- bind_rows(costs)
 

@@ -100,6 +100,6 @@ calcPowerplants <- function(rmFile, pyPowerplants, rm2pyTech, outDir, years) {
       dplyr::ungroup() %>%
       select(!c("pyTech", "preInvCap"))
     # Write csv into PyPSA folder
-    readr::write_csv(powerplantsScaled, file.path(outDir, paste0("powerplants_", y, ".csv")))
+    readr::write_csv(powerplantsScaled, file.path(outDir, paste0("powerplants_y", y, ".csv")))
   }
 }
