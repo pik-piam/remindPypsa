@@ -27,41 +27,43 @@ calcCapfac <- function(pyDirRes, py2rmTech, py2rmRegi, iter) {
     y <- stringr::str_extract(d, "(?<=y)\\d{4}")
 
     # Get production
-    gP <- readr::read_csv(file.path(d, "generators-p.csv"),
+    genP <- readr::read_csv(file.path(d, "generators-p.csv"),
                     col_types = "n") %>%
-      rename(hour = .data$...1) %>%
+      rename("hour" = .data$...1) %>%
       tidyr::pivot_longer(
-        cols = !.data$hour,
-        names_to = c("region", "bus", "tech"),
+        cols = !"hour",
+        names_to = c("region", "bus", "technology"),
         names_sep = " ",
         values_to = "p"
       ) %>%
       # Sum over year
-      group_by(.data$region, .data$tech, .data$bus) %>%
+      group_by(.data$region, .data$technology, .data$bus) %>%
       summarise(p_sum = sum(.data$p))
 
     # Get optimal nominal capacity
-    g <- readr::read_csv(file.path(d, "generators.csv"),
+    genPnom <- readr::read_csv(file.path(d, "generators.csv"),
                   show_col_types = FALSE) %>%
-      select(.data$name, .data$p_nom_opt) %>%
+      select("name", "p_nom_opt") %>%
       tidyr::separate(.data$name,
-               into = c("region", "bus", "tech"),
+               into = c("region", "bus", "technology"),
                sep = " ")
 
     # Calculate capacity factor
-    calc <- full_join(g, gP) %>%
+    calc <- full_join(genP, genPnom) %>%
       # Aggregate technologies
-      quitte::revalue.levels(tech = py2rmTech,
-                     region = py2rmRegi) %>%
-      group_by(.data$region, .data$tech, .data$bus) %>%
+      quitte::revalue.levels(technology = py2rmTech,
+                             region = py2rmRegi) %>%
+      group_by(.data$region, .data$technology, .data$bus) %>%
       summarise(p_sum = sum(.data$p_sum),
                 p_nom_opt = sum(.data$p_nom_opt)) %>%
+      # Filter technologies that have less than 1 MW in total
+      filter(sum(.data$p_nom_opt) > 1) %>%
       # Calculate capacity factors over regions
       summarise(value = sum(.data$p_sum) / (sum(.data$p_nom_opt) * 8760)) %>%
       # Add year
       mutate(year = y,
              var = "capfac") %>%
-      select(.data$year, .data$region, .data$tech, .data$var, .data$value)
+      select("year", "region", "technology", "var", "value")
 
     # Append to output
     cf <- bind_rows(cf, calc)
