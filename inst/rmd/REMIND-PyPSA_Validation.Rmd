@@ -1,0 +1,126 @@
+---
+title: "REMIND-PyPSA Validation"
+author: "Adrian Odenweller"
+date: "2023-03-04"
+output: html_document
+---
+
+This RMarkdown file creates a HTML/PDF with several figures for the iterative
+REMIND-PyPSA coupling. It relies on the plotting functions in "R/plot<var>.R".
+
+This file can be executed between iterations to analyse convergence progress and
+needs to be called from the REMIND output directory, where the results are. 
+
+Additionally, all plots are saved into a "REMIND-PyPSA_Plots" folder (ToDo).
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(remindPypsa)
+
+colorsTech <- c("CCGT")
+
+```
+
+
+```{r files, include=FALSE}
+# Set results directory
+resDir <- getwd()  # REMIND output directory
+pyResDir <- file.path("pypsa")  # PyPSA output directory
+# Get REMIND fulldata files
+rmFiles <- list.files(resDir, pattern = "fulldata\\_\\d{1,}.gdx", full.names = TRUE)
+# Get REMIND2PyPSA file
+remind2pypsa <- readRDS(file.path(resDir, "remind2pypsa.rds"))
+# Get PyPSA directories
+pyDir <- list.dirs(path = pyResDir, recursive = FALSE, full.names = TRUE)
+# Get PyPSA2REMIND file
+pypsa2remind <- readRDS(file.path(resDir, "pypsa2remind.rds"))
+```
+
+# Coupled variables
+
+This section includes plots of all variables that are exchanged between REMIND
+and PyPSA.
+
+## REMIND to PyPSA
+
+### Electricity load
+
+```{r}
+
+```
+
+### Pre-investment capacities
+
+```{r}
+
+```
+
+### Capital costs and marginal costs
+
+```{r}
+
+```
+
+
+
+## PyPSA to REMIND
+
+### Capacity factors
+
+REMIND values are calculated from fulldata_*.gdx to cross-check.
+PyPSA values come from pypsa2remind.rds.
+
+Over years, iterations in panels:
+```{r}
+
+```
+
+Over iterations, years in panels:
+```{r}
+
+```
+
+
+### Market values
+
+```{r}
+
+```
+
+### Capacity constraint
+
+# Non-coupled variables
+
+This section includes plots of several key variables that are not coupled
+between REMIND and PyPSA, but that should get harmonised
+
+## Capacity
+
+```{r}
+
+```
+
+## Generation
+
+```{r}
+
+```
+
+## Electricity price
+
+```{r}
+
+```
+
+# Model-specific variables
+
+## REMIND
+
+## PyPSA
+
+### Screening curve
+
+### Inverse screening curve
+
+### Residual Load Duration Curve
+
