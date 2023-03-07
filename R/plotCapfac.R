@@ -73,12 +73,14 @@ plotCapfac <- function(resDir, years, rm2pyTech) {
     # Downscale to PyPSA resolution
     quitte::revalue.levels(technology = rm2pyTech) %>%
     group_by(.data$year, .data$region, .data$technology, .data$iter) %>%
-    mutate(dummy = as.integer(dplyr::n_distinct(.data$capfac) == 1))
+    mutate(dummy = ifelse(iter > 1,
+                          as.integer(dplyr::n_distinct(.data$capfac) == 1),
+                          1))
 
   # Throw warning if some capacity factors don't match within group
   if (any(remind$dummy == 0)) {
     techProb <- as.character(unique(remind$technology[remind$dummy == 0]))
-    warning(paste("Capacity factors for", techProb, "don't match."))
+    warning(paste("Capacity factors for", techProb, "don't match.\n"))
     }
 
   # Reduce dimensionality
@@ -89,8 +91,12 @@ plotCapfac <- function(resDir, years, rm2pyTech) {
   p1 <- ggplot() +
     geom_line(data = remind,
               mapping = aes(x = .data$year, y = .data$capfac, color = .data$technology)) +
-    geom_point(data = pypsa2remind,
+    ggplot2::scale_color_discrete(name = "REMIND") +
+    ggnewscale::new_scale_color() +
+    geom_point(data = pypsa2remind %>%
+                 mutate(iter = iter + 1),
                mapping = aes(x = .data$year, y = .data$value, color = .data$tech)) +
+    ggplot2::scale_color_discrete(name = "PyPSA2REMIND") +
     facet_wrap(~.data$iter) +
     xlab("Year") +
     ylab("Capacity factor [1]") +
@@ -100,7 +106,8 @@ plotCapfac <- function(resDir, years, rm2pyTech) {
   p2 <- ggplot() +
     geom_line(data = remind,
               mapping = aes(x = .data$iter, y = .data$capfac, color = .data$technology)) +
-    geom_point(data = pypsa2remind,
+    geom_point(data = pypsa2remind %>%
+                 mutate(iter = iter + 1),
                mapping = aes(x = .data$iter, y = .data$value, color = .data$tech)) +
     facet_wrap(~.data$year) +
     xlab("Iteration") +
