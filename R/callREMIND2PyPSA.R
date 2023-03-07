@@ -6,6 +6,11 @@
 #' @return Writes data automatically.
 #' @export
 #'
+#' @examples
+#' \dontrun{
+#' callREMIND2PyPSA(pyDir = ".../pypsa-eur", iter = 5)
+#' }
+#'
 callREMIND2PyPSA <- function(pyDir, iter) {
   # Get REMIND run name including time stamp
   runName <- stringr::str_extract(getwd(), "(?<=output/).*")
