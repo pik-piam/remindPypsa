@@ -29,7 +29,7 @@ calcCapfac <- function(pyDirRes, py2rmTech, py2rmRegi, iter) {
     # Get production
     genP <- readr::read_csv(file.path(d, "generators-p.csv"),
                     col_types = "n") %>%
-      rename("hour" = .data$...1) %>%
+      rename("hour" = "...1") %>%
       tidyr::pivot_longer(
         cols = !"hour",
         names_to = c("region", "bus", "technology"),

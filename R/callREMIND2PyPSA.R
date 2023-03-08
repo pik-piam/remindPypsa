@@ -1,6 +1,6 @@
 #' Wrapper function to exchange data from REMIND to PyPSA
 #'
-#' @param pyDir PyPSA folder
+#' @param pyDir PyPSA model directory
 #' @param iter Current iteration
 #'
 #' @return Writes data automatically.

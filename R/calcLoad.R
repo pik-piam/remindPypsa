@@ -19,7 +19,8 @@ calcLoad <- function(rmFile, pyLoad, outDir, years) {
     restoreZeros = FALSE,
     columns = c("all_regi" = "region", "all_enty" = "seCarrier",
     "all_enty1" = "FeCarrier", "ttot" = "year", "value" = "prodFe"),
-    colFilter = list("region" = "DEU", "seCarrier" = "seel", "FeCarrier" = c("feels", "feelt"), "year" = years),
+    colFilter = list("region" = "DEU", "seCarrier" = "seel",
+                     "FeCarrier" = c("feels", "feelt"), "year" = years),
     recalcUnit = 1E6 * 8760  # TWa to MWh
   ) %>%
   group_by(.data$region, .data$year) %>%

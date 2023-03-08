@@ -54,6 +54,15 @@ callPyPSA2REMIND <- function(pyDir, iter) {
   # Combine data
   pypsa2remind <- bind_rows(capfac)
 
+  # Write GDX parameter for REMIND
+  # F: Change this to gdx package
+  gdxdt::writegdx.parameter(
+    gdx = paste0("PyPSA2REMIND_i", iter, ".gdx"),
+    dt = data.table::data.table(pypsa2remind),
+    name = "PyPSA2REMIND",
+    valcol = "value",
+    uelcols = c("year", "region", "technology", "var"))
+
   # Save data for plotting
   pypsa2remindReport <- pypsa2remind %>%
     mutate(year = as.integer(.data$year),
@@ -69,12 +78,4 @@ callPyPSA2REMIND <- function(pyDir, iter) {
   # Save as CSV
   readr::write_csv(pypsa2remindReport, "pypsa2remind.csv")
 
-  # Write GDX parameter
-  # F: Change this to gdx package
-  gdxdt::writegdx.parameter(
-    gdx = paste0("PyPSA2REMIND_i", iter, ".gdx"),
-    dt = data.table::data.table(pypsa2remind),
-    name = "PyPSA2REMIND",
-    valcol = "value",
-    uelcols = c("year", "region", "tech", "var"))
 }
