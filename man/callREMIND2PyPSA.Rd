@@ -7,7 +7,7 @@
 callREMIND2PyPSA(pyDir, iter)
 }
 \arguments{
-\item{pyDir}{PyPSA folder}
+\item{pyDir}{PyPSA model directory}
 
 \item{iter}{Current iteration}
 }
