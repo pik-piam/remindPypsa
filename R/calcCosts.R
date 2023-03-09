@@ -1,4 +1,5 @@
 #' Calculate capital and marginal costs (REMIND to PyPSA)
+#' This function writes costs_yXXXX.csv files for all years.
 #'
 #' @param rmFile REMIND output gdx file
 #' @param outDir Output folder for costs_yXXXX.csv files
@@ -6,7 +7,7 @@
 #' @param rm2pyTech REMIND to aggregated PyPSA technology mapping
 #' @param py2aggTech PyPSA to aggregated PyPSA technology mapping
 #'
-#' @return Writes one csv file for each year into outDir.
+#' @return Tibble with capital and marginal costs
 #' @export
 #'
 calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
@@ -60,11 +61,10 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     full_join(pmData) %>%
     group_by(.data$region, .data$tech, .data$year) %>%
     # Calculate annualised capital costs
-    dplyr::transmute(capCostAn =  (calcAnnuity(.data$disRate, .data$lifetime)
-                          + .data$omf
-                        )
-                        * .data$capCostOv
-          )
+    dplyr::transmute(
+      capCostAn = (calcAnnuity(.data$disRate, .data$lifetime) + .data$omf)
+                    * .data$capCostOv
+      )
 
   # Read in secondary energy electricity production
   # Q: Weighting instead by capacity?
@@ -77,17 +77,22 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     ) %>%
     select(!"enty")
 
+  rmDefaultTech <- c("bioigcc", "ngcc", "igcc", "tnrs", "ngt", "windoff", "dot", "wind", "hydro", "spv")
+
   # Calculate average of annualised capital costs weighted by prodSe by aggregated technology
   capCostAgg <- capCostAn %>%
     dplyr::right_join(prodSe) %>%
-    mutate(prodSe = ifelse(is.na(.data$prodSe), 0, .data$prodSe)) %>%
+    mutate(techAgg = .data$tech) %>%
+    quitte::revalue.levels(techAgg = rm2pyTech) %>%
+    group_by(.data$region, .data$year, .data$techAgg) %>%
+    # Create dummy variable "dummy" that is TRUE if all prodSe is zero within each group, FALSE otherwise
+    mutate(dummy = all(.data$prodSe == 0)) %>%
+    # Filter away technologies where prodSe = 0 for all and that are not default techs
+    filter(.data$dummy == FALSE | .data$tech %in% rmDefaultTech) %>%
+    # If prodSe zero set to 1
+    mutate(prodSe = ifelse(.data$prodSe == 0, 1, .data$prodSe)) %>%
     # Calculated average of capCost weighted by prodSe with technology mapping rm2pyTech
-    quitte::revalue.levels(tech = rm2pyTech) %>%
-    rename(techAgg = "tech") %>%
-    group_by(.data$year, .data$region, .data$techAgg) %>%
-    summarise(capCost = sum(.data$capCostAn * .data$prodSe) / sum(.data$prodSe)) %>%
-    # Remove technologies without capCost (currently csp and geohdr)
-    filter(!is.na(.data$capCost))
+    summarise(capCost = sum(.data$capCostAn * .data$prodSe) / sum(.data$prodSe))
 
   # Create new tibble with all PyPSA technologies and copy values from capCostAgg
   # F: Do this for all countries
@@ -123,7 +128,8 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
       gdxVar = "pm_eta_conv",
       columns = c("all_regi" = "region", "all_te" = "tech", "tall" = "year", "value" = "eta"),
       colFilter = list("region" = "DEU", "tech" = names(rm2pyTech), "year" = years)
-      )
+      ) %>%
+    filter(eta != 0)
 
   # Read in regional efficiencies for technologies with time-dependent eta
   pmDataEta <- readGDXtibble(
@@ -131,7 +137,8 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
       gdxVar = "pm_dataeta",
       columns = c("all_regi" = "region", "all_te" = "tech", "tall" = "year", "value" = "eta"),
       colFilter = list("region" = "DEU", "tech" = names(rm2pyTech), "year" = years)
-      )
+      ) %>%
+    filter(eta != 0)
 
   # Read in se2fe efficiencies for transmission and distribution (tdels and tdelt)
   # F: Weighted average of tdels and tdelt. Currently not important as they are the same.
@@ -228,17 +235,36 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     group_by(.data$region, .data$tech, .data$year) %>%
     dplyr::transmute(margCost = .data$vom + .data$fuelPrice / .data$eta + .data$carbonPrice * .data$emiInt)
 
+  # Calculate average of annualised capital costs weighted by prodSe by aggregated technology
+  capCostAgg <- capCostAn %>%
+    dplyr::right_join(prodSe) %>%
+    mutate(techAgg = .data$tech) %>%
+    quitte::revalue.levels(techAgg = rm2pyTech) %>%
+    group_by(.data$region, .data$year, .data$techAgg) %>%
+    # Create dummy variable "dummy" that is TRUE if all prodSe is zero within each group, FALSE otherwise
+    mutate(dummy = all(.data$prodSe == 0)) %>%
+    # Filter away technologies where prodSe = 0 for all and that are not default techs
+    filter(.data$dummy == FALSE | .data$tech %in% rmDefaultTech) %>%
+    # If prodSe zero set to 1
+    mutate(prodSe = ifelse(.data$prodSe == 0, 1, .data$prodSe)) %>%
+    # Calculated average of capCost weighted by prodSe with technology mapping rm2pyTech
+    summarise(capCost = sum(.data$capCostAn * .data$prodSe) / sum(.data$prodSe))
+
+
   # Calculate average of marginal costs weighted by prodSe by aggregated technology
   margCostAgg <- margCostRe %>%
     dplyr::right_join(prodSe) %>%
-    mutate(prodSe = ifelse(is.na(.data$prodSe), 0, .data$prodSe)) %>%
-    # Calculated average of margCost weighted by prodSe with technology mapping rm2pyTech
-    quitte::revalue.levels(tech = rm2pyTech) %>%
-    rename(techAgg = "tech") %>%
-    group_by(.data$year, .data$region, .data$techAgg) %>%
+    mutate(techAgg = .data$tech) %>%
+    quitte::revalue.levels(techAgg = rm2pyTech) %>%
+    group_by(.data$region, .data$year, .data$techAgg) %>%
+    # Create dummy variable "dummy" that is TRUE if all prodSe is zero within each group, FALSE otherwise
+    mutate(dummy = all(.data$prodSe == 0)) %>%
+    # Filter away technologies where prodSe = 0 for all and that are not default techs
+    filter(.data$dummy == FALSE | .data$tech %in% rmDefaultTech) %>%
+    # If prodSe zero set to 1
+    mutate(prodSe = ifelse(.data$prodSe == 0, 1, .data$prodSe)) %>%
     summarise(margCost = sum(.data$margCost * .data$prodSe) / sum(.data$prodSe)) %>%
-    # Remove technologies without margCost (currently csp and geohdr)
-    filter(!is.na(.data$margCost))
+    identity()
 
   # Create new tibble with all PyPSA technologies and copy values from margCostAgg
   margCost <- dplyr::tibble(
