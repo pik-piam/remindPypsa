@@ -10,7 +10,7 @@ createValidation <- function() {
     rmdFile <- system.file("rmd", "REMIND-PyPSA_Validation.Rmd",
                            package = "remindPypsa")
     # Copy RMarkdown file to current directory
-    file.copy(rmdFile, getwd())
+    file.copy(rmdFile, getwd(), overwrite = TRUE)
     # Render RMarkdown file
     rmarkdown::render("REMIND-PyPSA_Validation.Rmd")
 }
