@@ -2,7 +2,8 @@
 % Please edit documentation in R/plotCosts.R
 \name{plotCosts}
 \alias{plotCosts}
-\title{Plot capital and marginal costs from remind2pypsa.rds}
+\title{Plot annualised capital costs and marginal costs
+This function uses the remind2pypsa data file.}
 \usage{
 plotCosts(remind2pypsa, colorsTech, namesTech)
 }
@@ -17,5 +18,6 @@ plotCosts(remind2pypsa, colorsTech, namesTech)
 List of ggplot2 objects
 }
 \description{
-Plot capital and marginal costs from remind2pypsa.rds
+Plot annualised capital costs and marginal costs
+This function uses the remind2pypsa data file.
 }

@@ -18,7 +18,7 @@ plotCapfac(resDir, years, rm2pyTech, colorsTech, namesTech)
 \item{namesTech}{Pretty names mapping}
 }
 \value{
-Two ggplot2 objects
+List of ggplot2 objects
 }
 \description{
 Plot capacity factors

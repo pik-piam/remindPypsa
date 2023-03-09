@@ -2,7 +2,8 @@
 % Please edit documentation in R/calcCosts.R
 \name{calcCosts}
 \alias{calcCosts}
-\title{Calculate capital and marginal costs (REMIND to PyPSA)}
+\title{Calculate capital and marginal costs (REMIND to PyPSA)
+This function writes costs_yXXXX.csv files for all years.}
 \usage{
 calcCosts(rmFile, outDir, years, rm2pyTech, py2aggTech)
 }
@@ -18,8 +19,9 @@ calcCosts(rmFile, outDir, years, rm2pyTech, py2aggTech)
 \item{py2aggTech}{PyPSA to aggregated PyPSA technology mapping}
 }
 \value{
-Writes one csv file for each year into outDir.
+Tibble with capital and marginal costs
 }
 \description{
 Calculate capital and marginal costs (REMIND to PyPSA)
+This function writes costs_yXXXX.csv files for all years.
 }

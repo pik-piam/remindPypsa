@@ -145,7 +145,7 @@ and PyPSA.
 
 ### Capital costs and marginal costs
 
-```{r}
+```{r costs, echo = FALSE, message = FALSE}
 costs <- remindPypsa::plotCosts(remind2pypsa, colorsTech, namesTech)
 
 for (p in costs) print(p)
