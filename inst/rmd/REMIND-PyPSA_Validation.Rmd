@@ -2,7 +2,14 @@
 title: "REMIND-PyPSA Validation"
 author: "Adrian Odenweller"
 date: "2023-03-04"
-output: html_document
+output:
+  pdf_document:
+    number_sections: true
+    fig_width: 10
+    fig_height: 6
+    extra_dependencies: ["float"]
+fontsize: 11pt
+geometry: margin=0.5in
 ---
 
 This RMarkdown file creates a HTML/PDF with several figures for the iterative
@@ -14,26 +21,115 @@ needs to be called from the REMIND output directory, where the results are.
 Additionally, all plots are saved into a "REMIND-PyPSA_Plots" folder (ToDo).
 
 ```{r setup, include=FALSE}
-library(tidyverse)
-library(remindPypsa)
+knitr::opts_chunk$set(fig.pos = "H", out.extra = "")
 
-colorsTech <- c("CCGT")
+# Color mapping
+colorsTech <- c("solar" = "#ffcc00",
+                "onwind" = "#337fff",
+                "all_offwind" = "#334cff",
+                "offwind" = "#334cff",
+                "biomass" = "#005900",
+                "ror" = "#191999",
+                "CCGT" = "#999959",
+                "OCGT" = "#e5e5b2",
+                "oil" = "#663a00",
+                "all_coal" = "#0c0c0c",
+                "coal" = "#0c0c0c",
+                "lignite" = "#392306",
+                "nuclear" = "#ff33ff")
 
+# Pretty name mapping
+namesTech <- c("solar" = "Solar",
+               "onwind" = "Wind Onshore",
+               "all_offwind" = "Wind Offshore",
+               "offwind" = "Wind Offshore",
+               "biomass" = "Biomass",
+               "ror" = "Run of river",
+               "CCGT" = "CCGT",
+               "OCGT" = "OCGT",
+               "oil" = "Oil",
+               "all_coal" = "Coal+Lignite",
+               "coal" = "Coal",
+               "lignite" = "Lignite",
+               "nuclear" = "Nuclear")
+
+rm2pyTech <- c(
+  "biochp" = "biomass",
+  "bioigcc" = "biomass",
+  "bioigccc" = "biomass",
+  "ngcc" = "CCGT",
+  "ngccc" = "CCGT",
+  "gaschp" = "CCGT",
+  "igcc" = "all_coal",
+  "igccc" = "all_coal",
+  "pc" = "all_coal",
+  "coalchp" = "all_coal",
+  "tnrs" = "nuclear",
+  "fnrs" = "nuclear",
+  "ngt" =  "OCGT",
+  "windoff" = "all_offwind",  # Or just offwind?
+  "dot" = "oil",
+  "wind" = "onwind",
+  "hydro" = "ror",
+  "spv" = "solar")
+
+py2rmTech <- c(
+  "biomass" = "biomass",
+  "CCGT" = "CCGT",
+  "coal" = "all_coal",  # Aggregate coal
+  "lignite" = "all_coal",  # Aggregate coal
+  "nuclear" = "nuclear",
+  "OCGT" = "OCGT",
+  "offwind-ac" = "all_offwind",  # Aggregate offshore wind
+  "offwind-dc" = "all_offwind",  # Aggregate offshore wind
+  "oil" = "oil",
+  "onwind" = "onwind",
+  "ror" = "ror",
+  "solar" = "solar"
+)
+
+years <- c(seq(2025, 2060, 5), seq(2070, 2110, 10), 2130, 2150)
 ```
 
+# Import data and cross-check
 
-```{r files, include=FALSE}
+```{r files, echo=FALSE}
 # Set results directory
 resDir <- getwd()  # REMIND output directory
-pyResDir <- file.path("pypsa")  # PyPSA output directory
+pyResDir <- file.path(resDir, "pypsa")  # PyPSA output directory
 # Get REMIND fulldata files
 rmFiles <- list.files(resDir, pattern = "fulldata\\_\\d{1,}.gdx", full.names = TRUE)
 # Get REMIND2PyPSA file
 remind2pypsa <- readRDS(file.path(resDir, "remind2pypsa.rds"))
 # Get PyPSA directories
-pyDir <- list.dirs(path = pyResDir, recursive = FALSE, full.names = TRUE)
+pyDirs <- list.dirs(path = pyResDir, recursive = FALSE, full.names = TRUE)
 # Get PyPSA2REMIND file
 pypsa2remind <- readRDS(file.path(resDir, "pypsa2remind.rds"))
+
+# REMIND fulldata files
+cat(paste("Found", length(rmFiles), "REMIND fulldata gdx files.\n"))
+# REMIND2PyPSA file
+cat(paste("Found REMIND to PyPSA file with",
+            length(unique(remind2pypsa$variable)), "different variable(s):",
+            toString(unique(remind2pypsa$variable)), "\n"))
+# Cross-check number of PyPSA result directories
+for (y in years){
+  pyDirIters <- pyDirs[grepl(y, pyDirs)] %>%
+    stringr::str_extract("(?<=i)\\d{1,}") %>%
+    unique() %>%
+    as.integer() %>%
+    sort()
+  if (length(pyDirIters) != length(rmFiles)) {
+    warning("Number of PyPSA result directories inconsistent with REMIND in year ", y, "\n")
+  }
+}
+# PyPSA directories
+cat(paste("Found", length(pyDirs), "PyPSA directories for", length(years),
+          "time steps with", length(pyDirIters), "iterations each.\n"))
+# PyPSA2REMIND file
+cat(paste("Found PyPSA to REMIND file with",
+            length(unique(pypsa2remind$var)), "different variable(s):",
+            toString(unique(pypsa2remind$var))))
 ```
 
 # Coupled variables
@@ -45,20 +141,14 @@ and PyPSA.
 
 ### Electricity load
 
-```{r}
-
-```
-
 ### Pre-investment capacities
-
-```{r}
-
-```
 
 ### Capital costs and marginal costs
 
 ```{r}
+costs <- remindPypsa::plotCosts(remind2pypsa, colorsTech, namesTech)
 
+for (p in costs) print(p)
 ```
 
 
@@ -70,22 +160,14 @@ and PyPSA.
 REMIND values are calculated from fulldata_*.gdx to cross-check.
 PyPSA values come from pypsa2remind.rds.
 
-Over years, iterations in panels:
-```{r}
+```{r capfac, echo = FALSE, message = FALSE}
+capfac <- remindPypsa::plotCapfac(resDir, years, rm2pyTech, colorsTech, namesTech)
 
-```
-
-Over iterations, years in panels:
-```{r}
-
+for (p in capfac) print(p)
 ```
 
 
 ### Market values
-
-```{r}
-
-```
 
 ### Capacity constraint
 
@@ -96,21 +178,9 @@ between REMIND and PyPSA, but that should get harmonised
 
 ## Capacity
 
-```{r}
-
-```
-
 ## Generation
 
-```{r}
-
-```
-
 ## Electricity price
-
-```{r}
-
-```
 
 # Model-specific variables
 

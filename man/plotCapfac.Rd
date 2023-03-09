@@ -4,7 +4,7 @@
 \alias{plotCapfac}
 \title{Plot capacity factors}
 \usage{
-plotCapfac(resDir, years, rm2pyTech)
+plotCapfac(resDir, years, rm2pyTech, colorsTech, namesTech)
 }
 \arguments{
 \item{resDir}{REMIND directory}
@@ -12,9 +12,13 @@ plotCapfac(resDir, years, rm2pyTech)
 \item{years}{Years coupled for REMIND-PyPSA}
 
 \item{rm2pyTech}{REMIND to aggregated PyPSA technology mapping}
+
+\item{colorsTech}{Colour mapping}
+
+\item{namesTech}{Pretty names mapping}
 }
 \value{
-ggplot2 object
+Two ggplot2 objects
 }
 \description{
 Plot capacity factors

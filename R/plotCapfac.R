@@ -3,11 +3,13 @@
 #' @param resDir REMIND directory
 #' @param years Years coupled for REMIND-PyPSA
 #' @param rm2pyTech REMIND to aggregated PyPSA technology mapping
+#' @param colorsTech Colour mapping
+#' @param namesTech Pretty names mapping
 #'
-#' @return ggplot2 object
+#' @return List of ggplot2 objects
 #' @export
 #'
-plotCapfac <- function(resDir, years, rm2pyTech) {
+plotCapfac <- function(resDir, years, rm2pyTech, colorsTech, namesTech) {
   # Read in data passed from PyPSA to REMIND
   pypsa2remind <- readRDS(file.path(resDir, "pypsa2remind.rds")) %>%
     filter(.data$var == "capfac")
@@ -84,34 +86,45 @@ plotCapfac <- function(resDir, years, rm2pyTech) {
     }
 
   # Reduce dimensionality
-  remind <- remind %>%
-    summarise(capfac = dplyr::first(.data$capfac))
+  remindPlot <- remind %>%
+    summarise(capfac = dplyr::first(.data$capfac)) %>%
+    filter(.data$capfac != 0) %>%
+    quitte::order.levels(technology = names(colorsTech)) %>%
+    identity()
+
+  pypsa2remindPlot <- pypsa2remind %>%
+    mutate(iter = .data$iter + 1) %>%
+    quitte::order.levels(technology = names(colorsTech)) %>%
+    identity()
 
   # Plot over years
   p1 <- ggplot() +
-    geom_line(data = remind,
+    geom_line(data = remindPlot,
               mapping = aes(x = .data$year, y = .data$capfac, color = .data$technology)) +
-    ggplot2::scale_color_discrete(name = "REMIND") +
-    ggnewscale::new_scale_color() +
-    geom_point(data = pypsa2remind %>%
-                 mutate(iter = iter + 1),
-               mapping = aes(x = .data$year, y = .data$value, color = .data$tech)) +
-    ggplot2::scale_color_discrete(name = "PyPSA2REMIND") +
+    geom_point(data = pypsa2remindPlot,
+               mapping = aes(x = .data$year, y = .data$value, color = .data$technology)) +
+    ggplot2::scale_color_manual(name = "Technology",
+                                values = colorsTech,
+                                labels = namesTech) +
     facet_wrap(~.data$iter) +
     xlab("Year") +
-    ylab("Capacity factor [1]") +
+    ylab("Capacity factor") +
+    ggtitle("Capacity factors over years") +
     theme_bw()
 
   # Plot over iterations
   p2 <- ggplot() +
-    geom_line(data = remind,
+    geom_line(data = remindPlot,
               mapping = aes(x = .data$iter, y = .data$capfac, color = .data$technology)) +
-    geom_point(data = pypsa2remind %>%
-                 mutate(iter = iter + 1),
-               mapping = aes(x = .data$iter, y = .data$value, color = .data$tech)) +
+    geom_point(data = pypsa2remindPlot,
+               mapping = aes(x = .data$iter, y = .data$value, color = .data$technology)) +
+    ggplot2::scale_color_manual(name = "Technology",
+                                values = colorsTech,
+                                labels = namesTech) +
     facet_wrap(~.data$year) +
     xlab("Iteration") +
-    ylab("Capacity factor [1]") +
+    ylab("Capacity factor") +
+    ggtitle("Capacity factors over iterations") +
     theme_bw()
 
   return(list(p1, p2))
