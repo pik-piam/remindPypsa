@@ -21,6 +21,8 @@
 #' @importFrom ggplot2 xlab
 #' @importFrom ggplot2 ylab
 #' @importFrom ggplot2 theme_bw
+#' @importFrom ggplot2 ggtitle
+#' @importFrom ggplot2 scale_color_manual
 ## usethis namespace: end
 #' @docType package
 "_PACKAGE"
