@@ -1,6 +1,7 @@
 #' Wrapper function to exchange data from REMIND to PyPSA
 #'
 #' @param pyDir PyPSA model directory
+#' @param pyNameDefault Default PyPSA scenario name (from preparation)
 #' @param iter Current iteration
 #'
 #' @return Writes data automatically.
@@ -11,7 +12,7 @@
 #' callREMIND2PyPSA(pyDir = ".../pypsa-eur", iter = 5)
 #' }
 #'
-callREMIND2PyPSA <- function(pyDir, iter) {
+callREMIND2PyPSA <- function(pyDir, pyNameDefault, iter) {
   # Get REMIND run name including time stamp
   runName <- stringr::str_extract(getwd(), "(?<=output/).*")
 
@@ -59,7 +60,7 @@ callREMIND2PyPSA <- function(pyDir, iter) {
   # Scale up load time series for all years
   remindPypsa::calcLoad(
     rmFile = rmFile,
-    pyLoad = file.path(pyDir, "resources", "RM_Py_default", "load.csv"),
+    pyLoad = file.path(pyDir, "resources", pyNameDefault, "load.csv"),
     outDir = file.path(pyDir, "resources", runName),
     years = years
     )
@@ -76,7 +77,7 @@ callREMIND2PyPSA <- function(pyDir, iter) {
   # Adjust powerplant database for all years
   remindPypsa::calcPowerplants(
     rmFile = rmFile,
-    pyPowerplants = file.path(pyDir, "resources", "RM_Py_default", "powerplants.csv"),
+    pyPowerplants = file.path(pyDir, "resources", pyNameDefault, "powerplants.csv"),
     rm2pyTech = rm2pyTech,
     outDir = file.path(pyDir, "resources", runName),
     years = years

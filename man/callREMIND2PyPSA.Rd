@@ -4,10 +4,12 @@
 \alias{callREMIND2PyPSA}
 \title{Wrapper function to exchange data from REMIND to PyPSA}
 \usage{
-callREMIND2PyPSA(pyDir, iter)
+callREMIND2PyPSA(pyDir, pyNameDefault, iter)
 }
 \arguments{
 \item{pyDir}{PyPSA model directory}
+
+\item{pyNameDefault}{Default PyPSA scenario name (from preparation)}
 
 \item{iter}{Current iteration}
 }
