@@ -61,6 +61,7 @@ calcPowerplants <- function(rmFile, pyPowerplants, rm2pyTech, outDir, years) {
     # Take sum with minimum capacity of 0.1 MW to avoid zero capacity in PyPSA
     summarise(preInvCap = max(0.1, sum(preInvCap)))
     # Q: Can this be done more elegantly using agg_p_nom_minmax.csv?
+
   # Read powerplants.csv file
   powerplants <- readr::read_csv(pyPowerplants)
 

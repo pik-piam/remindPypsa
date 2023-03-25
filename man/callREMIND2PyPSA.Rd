@@ -21,7 +21,7 @@ Wrapper function to exchange data from REMIND to PyPSA
 }
 \examples{
 \dontrun{
-callREMIND2PyPSA(pyDir = ".../pypsa-eur", iter = 5)
+callREMIND2PyPSA(pyDir = ".../pypsa-eur", pyNameDefault = "REMIND-PyPSA_prepare", iter = 5)
 }
 
 }
