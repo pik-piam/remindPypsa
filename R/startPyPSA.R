@@ -14,15 +14,24 @@ startPyPSA <- function(pyDir, iter, copyConfig = TRUE) {
     # Copy required configuration files from inst/extdata into PyPSA directory
     # This could get moved to remind/scripts/start/prepare_and_run.R in the future
     pyFiles <- c(
-      "config.REMIND.yaml",
-      "Snakefile_REMIND_prepare",
-      "Snakefile_REMIND_solve",
+      "config.remind.yaml",
+      "Snakefile_remind",
       "StartPyPSA.sh")
     dirPckg <- system.file("extdata", package = "remindPypsa")
     # Copy and overwrite if file already exists
     file.copy(
       from = file.path(dirPckg, pyFiles),
       to = pyDir,
+      overwrite = TRUE
+    )
+    # Copy SLURM configuration file into cluster_config directory
+    dirCluster <- file.path(pyDir, "cluster_config")
+    if (!dir.exists(dirCluster)) {
+      dir.create(dirCluster)
+    }
+    file.copy(
+      from = file.path(dirPckg, "config.yaml"),
+      to = dirCluster,
       overwrite = TRUE
     )
     # Enable execution of StartPyPSA.sh for owner (group read+write, others read)
