@@ -250,7 +250,6 @@ calcCosts <- function(rmFile, outDir, years, rm2pyTech, py2aggTech) {
     # Calculated average of capCost weighted by prodSe with technology mapping rm2pyTech
     summarise(capCost = sum(.data$capCostAn * .data$prodSe) / sum(.data$prodSe))
 
-
   # Calculate average of marginal costs weighted by prodSe by aggregated technology
   margCostAgg <- margCostRe %>%
     dplyr::right_join(prodSe) %>%

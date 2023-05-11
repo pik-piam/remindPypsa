@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata from this file.
+type: software
+title: 'remindPypsa: REMIND-PyPSA model coupling scripts'
+version: 0.0.1.9032
+date-released: '2023-05-11'
+abstract: This package contains functions for the iterative bi-directional model coupling
+  of the integrated assessment model REMIND and the spatio-temporally detailed power
+  and energy system model family PyPSA.
+authors:
+- family-names: Odenweller
+  given-names: Adrian
+  email: adrian.odenweller@pik-potsdam.de
+license: LGPL-3.0
+repository-code: https://github.com/pik-piam/remindPypsa
+

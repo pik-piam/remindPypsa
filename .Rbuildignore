@@ -9,3 +9,4 @@
 ^.*\.zenodo.json$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^.*CITATION.cff$

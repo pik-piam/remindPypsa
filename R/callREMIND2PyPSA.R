@@ -75,7 +75,7 @@ callREMIND2PyPSA <- function(pyDir, pyNameDefault, iter) {
     )
 
   # Adjust powerplant database for all years
-  remindPypsa::calcPowerplants(
+  remindPypsa::calcCapacity(
     rmFile = rmFile,
     pyPowerplants = file.path(pyDir, "resources", pyNameDefault, "powerplants.csv"),
     rm2pyTech = rm2pyTech,

@@ -32,7 +32,10 @@ callPyPSA2REMIND <- function(pyDir, iter) {
   )
 
   # Move results from PyPSA directory to REMIND directory
-  dir.create("pypsa")
+  # Create directory if it does not exist
+  if (!dir.exists("pypsa")) {
+    dir.create("pypsa")
+  }
   pyDirRes <- file.path(pyDir, "results", runName)
   pyResFiles <- list.files(pyDirRes, full.names = TRUE)
   # Copy results
