@@ -74,8 +74,8 @@ callREMIND2PyPSA <- function(pyDir, pyNameDefault, iter) {
     py2aggTech = py2aggTech
     )
 
-  # Adjust powerplant database for all years
-  remindPypsa::calcCapacity(
+  # Calculate pre-investment capacities for all years
+  preInvCap <- remindPypsa::calcCapacity(
     rmFile = rmFile,
     pyPowerplants = file.path(pyDir, "resources", pyNameDefault, "powerplants.csv"),
     rm2pyTech = rm2pyTech,
@@ -84,7 +84,8 @@ callREMIND2PyPSA <- function(pyDir, pyNameDefault, iter) {
     )
 
   # Combine data
-  remind2pypsa <- bind_rows(costs)
+  remind2pypsa <- bind_rows(costs,
+                            preInvCap)
 
   # Save data for plotting
   remind2pypsaReport <- remind2pypsa %>%

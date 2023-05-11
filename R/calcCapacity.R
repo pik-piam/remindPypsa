@@ -131,9 +131,9 @@ calcCapacity <- function(rmFile, pyPowerplants, rm2pyTech, outDir, years) {
     preInvCapY <- preInvCap %>%
       dplyr::ungroup() %>%
       filter(.data$year == y,
-             .data$technology %in% c("onwind", "all_offwind", "solar")) %>%
+             .data$technology %in% c("onwind", "offwind", "solar")) %>%
       quitte::revalue.levels(technology = c("onwind" = "Onshore",
-                                            "all_offwind" = "Offshore",
+                                            "offwind" = "Offshore",
                                             "solar" = "PV"),
                              region = c("DEU" = "DE")) %>%
       select("technology", "region", "preInvCap") %>%
@@ -143,4 +143,11 @@ calcCapacity <- function(rmFile, pyPowerplants, rm2pyTech, outDir, years) {
     readr::write_csv(preInvCapY, file.path(outDir, paste0("renewable_capacities_y", y, ".csv")))
   }
   # Return for plotting
+  preInvCapOut <- preInvCap %>%
+    rename("tech" = "technology",
+           "value" = "preInvCap") %>%
+    mutate(variable = "preInvCap") %>%
+    select("year", "region", "tech", "variable", "value")
+
+  return(preInvCapOut)
 }
